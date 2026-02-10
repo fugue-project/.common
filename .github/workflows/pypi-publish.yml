@@ -8,6 +8,10 @@ on:
         required: false
         type: string
         default: ''
+    secrets:
+      PYPI_TOKEN:
+        description: 'PyPI API token for authentication'
+        required: true
 
 jobs:
   publish:

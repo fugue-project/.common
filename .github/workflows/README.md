@@ -21,6 +21,8 @@ on:
 jobs:
   publish:
     uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 ```
 
 That's it! The workflow will automatically use your repository name as the PyPI project name.
@@ -30,6 +32,12 @@ That's it! The workflow will automatically use your repository name as the PyPI 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `pypi-project-name` | PyPI project name for environment URL | No | Repository name |
+
+### Secrets
+
+| Secret | Description | Required |
+|--------|-------------|----------|
+| `PYPI_TOKEN` | PyPI API token for authentication | Yes |
 
 ### Custom PyPI Project Name
 
@@ -48,6 +56,8 @@ jobs:
     uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
     with:
       pypi-project-name: 'custom-pypi-name'
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 ```
 
 ### Prerequisites

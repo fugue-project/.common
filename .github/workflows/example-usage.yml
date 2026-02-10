@@ -18,9 +18,13 @@ jobs:
   publish:
     # Simplest usage - uses repository name as PyPI project name
     uses: fugue-project/.common/.github/workflows/pypi-publish.yml@main
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
   # Or override the PyPI project name if different from repository name:
   # publish:
   #   uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
   #   with:
   #     pypi-project-name: 'custom-pypi-name'
+  #   secrets:
+  #     PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
