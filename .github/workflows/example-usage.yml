@@ -4,7 +4,7 @@
 # Requirements:
 # 1. A Makefile with a 'devenv' target
 # 2. A pyproject.toml with a 'version' field
-# 3. PyPI trusted publishing configured for your package
+# 3. A PyPI API token stored as a GitHub secret named PYPI_TOKEN
 # 4. A 'release' GitHub environment in your repository
 
 name: Publish to PyPI
