@@ -17,7 +17,7 @@ on:
 jobs:
   publish:
     # Simplest usage - uses repository name as PyPI project name
-    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
+    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@main
 
   # Or override the PyPI project name if different from repository name:
   # publish:
