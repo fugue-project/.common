@@ -1,8 +1,4 @@
-# Reusable GitHub Actions Workflows
-
-This repository contains reusable GitHub Actions workflows that can be shared across repositories in the fugue-project organization.
-
-## PyPI Publish Workflow
+# PyPI Publish Workflow
 
 A reusable workflow for publishing Python packages to PyPI using API token authentication and the `uv` package manager.
 
@@ -20,7 +16,7 @@ on:
 
 jobs:
   publish:
-    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
+    uses: fugue-project/.common/.github/workflows/pypi-publish/workflow.yml@main
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 ```
@@ -53,7 +49,7 @@ on:
 
 jobs:
   publish:
-    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
+    uses: fugue-project/.common/.github/workflows/pypi-publish/workflow.yml@main
     with:
       pypi-project-name: 'custom-pypi-name'
     secrets:
