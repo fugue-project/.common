@@ -1,0 +1,26 @@
+# Example: How to use the reusable PyPI publish workflow from another repository
+# Place this file in your repository's .github/workflows/ directory
+#
+# Requirements:
+# 1. A Makefile with a 'devenv' target
+# 2. A pyproject.toml with a 'version' field
+# 3. PyPI trusted publishing configured for your package
+# 4. A 'release' GitHub environment in your repository
+
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - 'v*'  # Tag must match version in pyproject.toml (with or without 'v' prefix)
+
+jobs:
+  publish:
+    # Simplest usage - uses repository name as PyPI project name
+    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
+
+  # Or override the PyPI project name if different from repository name:
+  # publish:
+  #   uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
+  #   with:
+  #     pypi-project-name: 'custom-pypi-name'
