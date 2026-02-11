@@ -4,63 +4,10 @@ This repository contains reusable GitHub Actions workflows that can be shared ac
 
 ## Table of Contents
 
-- [Lint](#lint)
-- [PyPI Publish](#pypi-publish)
-
----
-
-## Lint
-
-A reusable workflow for running code linting on Python projects using pre-commit and the `uv` package manager.
-
-### Usage
-
-In your repository, create a workflow file (e.g., `.github/workflows/lint.yml`) with the following content:
-
-```yaml
-name: Lint
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  lint:
-    uses: fugue-project/.common/.github/workflows/lint.yml@main
-```
-
-That's it! The workflow will automatically install dependencies and run pre-commit with the shared configuration.
-
-### Prerequisites
-
-For the workflow to work in your repository, ensure:
-
-1. **Repository Structure**: Your repository should have:
-   - A `Makefile` with a `devenv` target (to install dependencies)
-   - Pre-commit must be available (typically installed via `make devenv`)
-
-### How It Works
-
-1. Triggers based on the calling workflow's configuration (typically on push/PR)
-2. Checks out the calling repository's code
-3. Uses the shared lint composite action from `.common/.github/actions/lint`
-4. Sets up `uv` package manager with Python 3.12
-5. Runs `make devenv` to setup development environment
-6. Runs `uv run pre-commit run --all-files` with the bundled config from the action
-
-### Self-Contained Configuration
-
-The pre-commit configuration is bundled with the composite action at `.github/actions/lint/`. When you reference the workflow at a specific ref (e.g., `@main` or `@v1.0.0`), you automatically get the configuration from that same ref. This ensures version consistency and makes the workflow truly self-contained.
-
-### Benefits
-
-- **Zero Configuration**: No inputs or secrets required
-- **Version-Locked Config**: Configuration travels with the workflow at the same git ref
-- **Consistent Linting Rules**: All projects use the same pre-commit configuration
-- **Centralized Updates**: Update linting rules in one place, tag it, and projects can adopt new versions
-- **Standardized Environment**: All projects use Python 3.12 with uv
+- [Workflows](#workflows)
+  - [PyPI Publish](#pypi-publish)
+- [Actions](#actions)
+  - [Lint](#lint)
 
 ---
 
@@ -173,6 +120,23 @@ The validation script is included in this common repository, so you don't need t
 - **Consistency**: All projects use the same tested workflow
 - **Easy Updates**: Fix bugs or add features in one place
 - **Security**: Uses GitHub Secrets to securely store your PyPI API token
+
+---
+
+## Actions
+
+### Lint
+
+A composite action for running code linting with pre-commit. [View full documentation →](../actions/lint/README.md)
+
+**Quick Usage:**
+```yaml
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fugue-project/.common/.github/actions/lint@main
+```
 
 ---
 
