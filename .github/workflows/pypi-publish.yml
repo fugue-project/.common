@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: fugue-project/.common
-          ref: ${{ github.workflow_ref }}
+          ref: ${{ github.workflow_sha }}
           path: .common-workflows
           sparse-checkout: |
             scripts/validate_release.py

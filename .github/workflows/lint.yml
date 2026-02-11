@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: fugue-project/.common
-          ref: ${{ github.workflow_ref }}
+          ref: ${{ github.workflow_sha }}
           path: .common-workflows
           sparse-checkout: |
             .pre-commit-config.yml
