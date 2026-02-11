@@ -6,29 +6,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12"]
 
     steps:
-      - name: Clone repo
-        uses: actions/checkout@v5
-
-      - name: Checkout common workflows repo
-        uses: actions/checkout@v5
-        with:
-          repository: fugue-project/.common
-          path: .common-workflows
-
-      - name: Setup uv ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: false
-          cache-dependency-glob: "pyproject.toml"
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: make devenv
-
-      - name: Lint
-        run: uv run pre-commit run --all-files --config .common-workflows/.pre-commit-config.yml
+      - name: Run lint action
+        uses: fugue-project/.common/.github/actions/lint@main

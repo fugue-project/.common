@@ -1,0 +1,29 @@
+name: 'Lint with Pre-commit'
+description: 'Run pre-commit linting using a shared configuration'
+
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.12'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: false
+        cache-dependency-glob: "pyproject.toml"
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install dependencies
+      shell: bash
+      run: make devenv
+
+    - name: Run pre-commit
+      shell: bash
+      run: uv run pre-commit run --all-files --config ${{ github.action_path }}/.pre-commit-config.yml

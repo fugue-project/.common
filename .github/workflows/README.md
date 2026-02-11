@@ -11,7 +11,7 @@ This repository contains reusable GitHub Actions workflows that can be shared ac
 
 ## Lint
 
-A reusable workflow for running code linting on Python projects using the `uv` package manager.
+A reusable workflow for running code linting on Python projects using pre-commit and the `uv` package manager.
 
 ### Usage
 
@@ -45,16 +45,21 @@ For the workflow to work in your repository, ensure:
 
 1. Triggers based on the calling workflow's configuration (typically on push/PR)
 2. Checks out the calling repository's code
-3. Checks out the `.common` repository to access the shared `.pre-commit-config.yml`
+3. Uses the shared lint composite action from `.common/.github/actions/lint`
 4. Sets up `uv` package manager with Python 3.12
 5. Runs `make devenv` to setup development environment
-6. Runs `uv run pre-commit run --all-files` using the shared pre-commit configuration
+6. Runs `uv run pre-commit run --all-files` with the bundled config from the action
+
+### Self-Contained Configuration
+
+The pre-commit configuration is bundled with the composite action at `.github/actions/lint/`. When you reference the workflow at a specific ref (e.g., `@main` or `@v1.0.0`), you automatically get the configuration from that same ref. This ensures version consistency and makes the workflow truly self-contained.
 
 ### Benefits
 
 - **Zero Configuration**: No inputs or secrets required
-- **Consistent Linting Rules**: All projects use the same pre-commit configuration from `.common`
-- **Centralized Updates**: Update linting rules in one place, affects all projects
+- **Version-Locked Config**: Configuration travels with the workflow at the same git ref
+- **Consistent Linting Rules**: All projects use the same pre-commit configuration
+- **Centralized Updates**: Update linting rules in one place, tag it, and projects can adopt new versions
 - **Standardized Environment**: All projects use Python 3.12 with uv
 
 ---
