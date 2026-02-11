@@ -1,4 +1,14 @@
-# PyPI Publish Workflow
+# Reusable GitHub Actions Workflows
+
+This repository contains reusable GitHub Actions workflows that can be shared across repositories in the fugue-project organization.
+
+## Table of Contents
+
+- [PyPI Publish](#pypi-publish)
+
+---
+
+## PyPI Publish
 
 A reusable workflow for publishing Python packages to PyPI using API token authentication and the `uv` package manager.
 
@@ -16,7 +26,7 @@ on:
 
 jobs:
   publish:
-    uses: fugue-project/.common/.github/workflows/pypi-publish/workflow.yml@main
+    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@main
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 ```
@@ -49,7 +59,7 @@ on:
 
 jobs:
   publish:
-    uses: fugue-project/.common/.github/workflows/pypi-publish/workflow.yml@main
+    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@main
     with:
       pypi-project-name: 'custom-pypi-name'
     secrets:
@@ -107,3 +117,13 @@ The validation script is included in this common repository, so you don't need t
 - **Consistency**: All projects use the same tested workflow
 - **Easy Updates**: Fix bugs or add features in one place
 - **Security**: Uses GitHub Secrets to securely store your PyPI API token
+
+---
+
+## Adding New Workflows
+
+When adding a new reusable workflow:
+
+1. Create the workflow file in `.github/workflows/` (e.g., `my-workflow.yml`)
+2. Add documentation to this README following the structure above
+3. Include usage examples directly in the documentation
