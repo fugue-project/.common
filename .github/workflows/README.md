@@ -2,9 +2,66 @@
 
 This repository contains reusable GitHub Actions workflows that can be shared across repositories in the fugue-project organization.
 
-## PyPI Publish Workflow
+## Table of Contents
 
-A reusable workflow for publishing Python packages to PyPI using trusted publishing (OIDC) and the `uv` package manager.
+- [Lint](#lint)
+- [PyPI Publish](#pypi-publish)
+
+---
+
+## Lint
+
+A reusable workflow for running code linting on Python projects using the `uv` package manager.
+
+### Usage
+
+In your repository, create a workflow file (e.g., `.github/workflows/lint.yml`) with the following content:
+
+```yaml
+name: Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    uses: fugue-project/.common/.github/workflows/lint.yml@main
+```
+
+That's it! The workflow will automatically install dependencies and run pre-commit with the shared configuration.
+
+### Prerequisites
+
+For the workflow to work in your repository, ensure:
+
+1. **Repository Structure**: Your repository should have:
+   - A `Makefile` with a `devenv` target (to install dependencies)
+   - Pre-commit must be available (typically installed via `make devenv`)
+
+### How It Works
+
+1. Triggers based on the calling workflow's configuration (typically on push/PR)
+2. Checks out the calling repository's code
+3. Checks out the `.common` repository to access the shared `.pre-commit-config.yml`
+4. Sets up `uv` package manager with Python 3.12
+5. Runs `make devenv` to setup development environment
+6. Runs `uv run pre-commit run --all-files` using the shared pre-commit configuration
+
+### Benefits
+
+- **Zero Configuration**: No inputs or secrets required
+- **Consistent Linting Rules**: All projects use the same pre-commit configuration from `.common`
+- **Centralized Updates**: Update linting rules in one place, affects all projects
+- **Standardized Environment**: All projects use Python 3.12 with uv
+
+---
+
+## PyPI Publish
+
+A reusable workflow for publishing Python packages to PyPI using API token authentication and the `uv` package manager.
 
 ### Usage
 
@@ -20,7 +77,9 @@ on:
 
 jobs:
   publish:
-    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
+    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@main
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 ```
 
 That's it! The workflow will automatically use your repository name as the PyPI project name.
@@ -30,6 +89,12 @@ That's it! The workflow will automatically use your repository name as the PyPI 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `pypi-project-name` | PyPI project name for environment URL | No | Repository name |
+
+### Secrets
+
+| Secret | Description | Required |
+|--------|-------------|----------|
+| `PYPI_TOKEN` | PyPI API token for authentication | Yes |
 
 ### Custom PyPI Project Name
 
@@ -45,19 +110,24 @@ on:
 
 jobs:
   publish:
-    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@master
+    uses: fugue-project/.common/.github/workflows/pypi-publish.yml@main
     with:
       pypi-project-name: 'custom-pypi-name'
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 ```
 
 ### Prerequisites
 
 For the workflow to work in your repository, ensure:
 
-1. **PyPI Trusted Publishing**: Configure OIDC trusted publishing on PyPI for your package
-   - Go to your PyPI project settings
-   - Add a "trusted publisher" for GitHub Actions
-   - Specify: `fugue-project`, your repository name, `publish.yml`, and `release` environment
+1. **PyPI API Token**: Create and configure a PyPI API token
+   - Go to https://pypi.org/manage/account/token/
+   - Create a new API token (can be scoped to a specific project or account-wide)
+   - Add the token to your repository secrets:
+     - Go to Settings → Secrets and variables → Actions
+     - Create a new secret named `PYPI_TOKEN`
+     - Paste your PyPI API token as the value
 
 2. **GitHub Environment**: Create a `release` environment in your repository settings
    - Go to Settings → Environments → New environment
@@ -77,7 +147,7 @@ For the workflow to work in your repository, ensure:
 5. Runs `make devenv` to setup development environment
 6. Validates the release tag matches version in `pyproject.toml`
 7. Builds the package using `uv build`
-8. Publishes to PyPI using `uv publish` with OIDC authentication
+8. Publishes to PyPI using `uv publish` with API token authentication
 
 ### Release Tag Validation
 
@@ -93,8 +163,18 @@ The validation script is included in this common repository, so you don't need t
 
 ### Benefits
 
-- **Zero Configuration**: Works out of the box - just reference the workflow and you're done
+- **Zero Configuration**: Works out of the box - just reference the workflow and add your PyPI token
 - **Reduced Duplication**: Single source of truth for PyPI publishing logic and validation
 - **Consistency**: All projects use the same tested workflow
 - **Easy Updates**: Fix bugs or add features in one place
-- **Security**: Uses OIDC trusted publishing (no stored credentials)
+- **Security**: Uses GitHub Secrets to securely store your PyPI API token
+
+---
+
+## Adding New Workflows
+
+When adding a new reusable workflow:
+
+1. Create the workflow file in `.github/workflows/` (e.g., `my-workflow.yml`)
+2. Add documentation to this README following the structure above
+3. Include usage examples directly in the documentation

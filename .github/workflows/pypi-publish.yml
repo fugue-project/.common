@@ -8,6 +8,10 @@ on:
         required: false
         type: string
         default: ''
+    secrets:
+      PYPI_TOKEN:
+        description: 'PyPI API token for authentication'
+        required: true
 
 jobs:
   publish:
@@ -18,7 +22,7 @@ jobs:
       url: https://pypi.org/p/${{ inputs.pypi-project-name || github.event.repository.name }}
     permissions:
       contents: read
-      id-token: write # Required for trusted publishing (OIDC)
+      # id-token: write # Not needed when using API token
     env:
       UV_PYTHON: "3.11"
       PROJECT_NAME: ${{ inputs.pypi-project-name || github.event.repository.name }}
@@ -51,4 +55,4 @@ jobs:
         run: uv build
 
       - name: Publish to PyPI
-        run: uv publish
+        run: uv publish --token ${{ secrets.PYPI_TOKEN }}
