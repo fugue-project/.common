@@ -4,10 +4,64 @@ This repository contains reusable GitHub Actions workflows that can be shared ac
 
 ## Table of Contents
 
-- [Workflows](#workflows)
-  - [PyPI Publish](#pypi-publish)
-- [Actions](#actions)
-  - [Lint](#lint)
+- [Lint](#lint)
+- [PyPI Publish](#pypi-publish)
+
+---
+
+## Lint
+
+A reusable workflow for running code linting on Python projects using pre-commit and the `uv` package manager.
+
+### Usage
+
+In your repository, create a workflow file (e.g., `.github/workflows/lint.yml`) with the following content:
+
+```yaml
+name: Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    uses: fugue-project/.common/.github/workflows/lint.yml@main
+```
+
+That's it! The workflow will automatically install dependencies and run pre-commit with the shared configuration.
+
+### Prerequisites
+
+For the workflow to work in your repository, ensure:
+
+1. **Repository Structure**: Your repository should have:
+   - A `Makefile` with a `devenv` target (to install dependencies including pre-commit)
+
+### How It Works
+
+1. Triggers based on the calling workflow's configuration (typically on push/PR)
+2. Checks out the calling repository's code
+3. Checks out the `.common` repository at the same ref to get `.pre-commit-config.yml`
+4. Sets up `uv` package manager with Python 3.12
+5. Runs `make devenv` to setup development environment
+6. Runs `uv run pre-commit run --all-files` with the shared config
+
+### Version-Locked Configuration
+
+The workflow uses `${{ github.action_ref }}` to checkout the `.common` repository at the same ref as the workflow call. This means:
+- `@main` uses config from `main`
+- `@v1.0.0` uses config from `v1.0.0`
+- Configuration and workflow are always in sync
+
+### Benefits
+
+- **Zero Configuration**: No inputs or secrets required
+- **Version-Locked**: Config and workflow always at the same git ref
+- **Consistent Linting**: All projects use the same pre-commit configuration
+- **Centralized Updates**: Update config in one place, version it with tags
 
 ---
 
@@ -121,24 +175,6 @@ The validation script is included in this common repository, so you don't need t
 - **Easy Updates**: Fix bugs or add features in one place
 - **Security**: Uses GitHub Secrets to securely store your PyPI API token
 
----
-
-## Actions
-
-### Lint
-
-A composite action for running code linting with pre-commit. [View full documentation →](../actions/lint/README.md)
-
-**Quick Usage:**
-```yaml
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: fugue-project/.common/.github/actions/lint@main
-```
-
----
 
 ## Adding New Workflows
 

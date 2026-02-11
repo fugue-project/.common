@@ -1,0 +1,37 @@
+name: Lint
+
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - name: Checkout calling repository
+        uses: actions/checkout@v5
+
+      - name: Checkout common workflows repository
+        uses: actions/checkout@v5
+        with:
+          repository: fugue-project/.common
+          ref: ${{ github.action_ref }}
+          path: .common-workflows
+          sparse-checkout: |
+            .pre-commit-config.yml
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
+          cache-dependency-glob: "pyproject.toml"
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: make devenv
+
+      - name: Run pre-commit
+        run: uv run pre-commit run --all-files --config .common-workflows/.pre-commit-config.yml
