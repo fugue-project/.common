@@ -11,6 +11,12 @@ jobs:
         python-version: ["3.12"]
 
     steps:
+      - name: Debug refs
+        run: |
+          echo "github.action_ref: ${{ github.action_ref }}"
+          echo "github.ref: ${{ github.ref }}"
+          echo "github.ref_name: ${{ github.ref_name }}"
+
       - name: Checkout calling repository
         uses: actions/checkout@v5
 
