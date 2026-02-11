@@ -22,14 +22,16 @@ name: Lint
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   lint:
     uses: fugue-project/.common/.github/workflows/lint.yml@main
 ```
 
-That's it! The workflow will automatically install dependencies, and run linting.
+That's it! The workflow will automatically install dependencies and run pre-commit with the shared configuration.
 
 ### Prerequisites
 
@@ -37,22 +39,23 @@ For the workflow to work in your repository, ensure:
 
 1. **Repository Structure**: Your repository should have:
    - A `Makefile` with a `devenv` target (to install dependencies)
-   - A `Makefile` with a `lint` target (to run linting)
+   - Pre-commit must be available (typically installed via `make devenv`)
 
 ### How It Works
 
 1. Triggers based on the calling workflow's configuration (typically on push/PR)
-2. Checks out the repository's code
-3. Sets up `uv` package manager with Python 3.12
-4. Runs `make devenv` to setup development environment
-5. Runs `make lint` to execute linting
+2. Checks out the calling repository's code
+3. Checks out the `.common` repository to access the shared `.pre-commit-config.yml`
+4. Sets up `uv` package manager with Python 3.12
+5. Runs `make devenv` to setup development environment
+6. Runs `uv run pre-commit run --all-files` using the shared pre-commit configuration
 
 ### Benefits
 
 - **Zero Configuration**: No inputs or secrets required
-- **Consistent Environment**: All projects use Python 3.12 with uv
-- **Standardized Linting**: Ensures all projects follow the same linting process
-- **Easy Updates**: Update linting logic in one place
+- **Consistent Linting Rules**: All projects use the same pre-commit configuration from `.common`
+- **Centralized Updates**: Update linting rules in one place, affects all projects
+- **Standardized Environment**: All projects use Python 3.12 with uv
 
 ---
 

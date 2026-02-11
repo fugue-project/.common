@@ -14,6 +14,12 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v5
 
+      - name: Checkout common workflows repo
+        uses: actions/checkout@v5
+        with:
+          repository: fugue-project/.common
+          path: .common-workflows
+
       - name: Setup uv ${{ matrix.python-version }}
         uses: astral-sh/setup-uv@v5
         with:
@@ -25,4 +31,4 @@ jobs:
         run: make devenv
 
       - name: Lint
-        run: make lint
+        run: uv run pre-commit run --all-files --config .common-workflows/.pre-commit-config.yml
