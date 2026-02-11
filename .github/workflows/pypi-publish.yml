@@ -8,6 +8,11 @@ on:
         required: false
         type: string
         default: ''
+      script-ref:
+        description: 'Git ref of .common repo to use for scripts (default: main)'
+        required: false
+        type: string
+        default: 'main'
     secrets:
       PYPI_TOKEN:
         description: 'PyPI API token for authentication'
@@ -35,6 +40,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: fugue-project/.common
+          ref: ${{ inputs.script-ref }}
           path: .common-workflows
           sparse-checkout: |
             scripts/validate_release.py

@@ -11,7 +11,7 @@ This repository contains reusable GitHub Actions workflows that can be shared ac
 
 ## Lint
 
-A reusable workflow for running code linting on Python projects using the `uv` package manager.
+A reusable workflow for running code linting on Python projects using pre-commit and the `uv` package manager.
 
 ### Usage
 
@@ -33,29 +33,50 @@ jobs:
 
 That's it! The workflow will automatically install dependencies and run pre-commit with the shared configuration.
 
+### Inputs
+
+| Input | Description | Required | Default |
+|-------|-------------|----------|---------|
+| `config-ref` | Git ref of .common repo to use for pre-commit config | No | `main` |
+
+### Using a Specific Config Version
+
+To use a specific version of the pre-commit config:
+
+```yaml
+jobs:
+  lint:
+    uses: fugue-project/.common/.github/workflows/lint.yml@main
+    with:
+      config-ref: 'v1.0.0'  # or any branch/tag/sha
+```
+
 ### Prerequisites
 
 For the workflow to work in your repository, ensure:
 
 1. **Repository Structure**: Your repository should have:
-   - A `Makefile` with a `devenv` target (to install dependencies)
-   - Pre-commit must be available (typically installed via `make devenv`)
+   - A `Makefile` with a `devenv` target (to install dependencies including pre-commit)
 
 ### How It Works
 
 1. Triggers based on the calling workflow's configuration (typically on push/PR)
 2. Checks out the calling repository's code
-3. Checks out the `.common` repository to access the shared `.pre-commit-config.yml`
+3. Checks out the `.common` repository at the same ref to get `.pre-commit-config.yml`
 4. Sets up `uv` package manager with Python 3.12
 5. Runs `make devenv` to setup development environment
-6. Runs `uv run pre-commit run --all-files` using the shared pre-commit configuration
+6. Runs `uv run pre-commit run --all-files` with the shared config
+
+### Configuration Versioning
+
+By default, the workflow uses the pre-commit config from the `main` branch of `.common`. You can override this with the `config-ref` input to pin to a specific version or test with a development branch
 
 ### Benefits
 
 - **Zero Configuration**: No inputs or secrets required
-- **Consistent Linting Rules**: All projects use the same pre-commit configuration from `.common`
-- **Centralized Updates**: Update linting rules in one place, affects all projects
-- **Standardized Environment**: All projects use Python 3.12 with uv
+- **Version-Locked**: Config and workflow always at the same git ref
+- **Consistent Linting**: All projects use the same pre-commit configuration
+- **Centralized Updates**: Update config in one place, version it with tags
 
 ---
 
@@ -89,6 +110,7 @@ That's it! The workflow will automatically use your repository name as the PyPI 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `pypi-project-name` | PyPI project name for environment URL | No | Repository name |
+| `script-ref` | Git ref of .common repo to use for validation script | No | `main` |
 
 ### Secrets
 
@@ -169,7 +191,6 @@ The validation script is included in this common repository, so you don't need t
 - **Easy Updates**: Fix bugs or add features in one place
 - **Security**: Uses GitHub Secrets to securely store your PyPI API token
 
----
 
 ## Adding New Workflows
 
