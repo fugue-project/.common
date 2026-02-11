@@ -33,6 +33,24 @@ jobs:
 
 That's it! The workflow will automatically install dependencies and run pre-commit with the shared configuration.
 
+### Inputs
+
+| Input | Description | Required | Default |
+|-------|-------------|----------|---------|
+| `config-ref` | Git ref of .common repo to use for pre-commit config | No | `main` |
+
+### Using a Specific Config Version
+
+To use a specific version of the pre-commit config:
+
+```yaml
+jobs:
+  lint:
+    uses: fugue-project/.common/.github/workflows/lint.yml@main
+    with:
+      config-ref: 'v1.0.0'  # or any branch/tag/sha
+```
+
 ### Prerequisites
 
 For the workflow to work in your repository, ensure:
@@ -49,12 +67,9 @@ For the workflow to work in your repository, ensure:
 5. Runs `make devenv` to setup development environment
 6. Runs `uv run pre-commit run --all-files` with the shared config
 
-### Version-Locked Configuration
+### Configuration Versioning
 
-The workflow uses `${{ github.action_ref }}` to checkout the `.common` repository at the same ref as the workflow call. This means:
-- `@main` uses config from `main`
-- `@v1.0.0` uses config from `v1.0.0`
-- Configuration and workflow are always in sync
+By default, the workflow uses the pre-commit config from the `main` branch of `.common`. You can override this with the `config-ref` input to pin to a specific version or test with a development branch
 
 ### Benefits
 
@@ -95,6 +110,7 @@ That's it! The workflow will automatically use your repository name as the PyPI 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `pypi-project-name` | PyPI project name for environment URL | No | Repository name |
+| `script-ref` | Git ref of .common repo to use for validation script | No | `main` |
 
 ### Secrets
 
