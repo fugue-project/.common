@@ -4,7 +4,55 @@ This repository contains reusable GitHub Actions workflows that can be shared ac
 
 ## Table of Contents
 
+- [Lint](#lint)
 - [PyPI Publish](#pypi-publish)
+
+---
+
+## Lint
+
+A reusable workflow for running code linting on Python projects using the `uv` package manager.
+
+### Usage
+
+In your repository, create a workflow file (e.g., `.github/workflows/lint.yml`) with the following content:
+
+```yaml
+name: Lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    uses: fugue-project/.common/.github/workflows/lint.yml@main
+```
+
+That's it! The workflow will automatically install dependencies, and run linting.
+
+### Prerequisites
+
+For the workflow to work in your repository, ensure:
+
+1. **Repository Structure**: Your repository should have:
+   - A `Makefile` with a `devenv` target (to install dependencies)
+   - A `Makefile` with a `lint` target (to run linting)
+
+### How It Works
+
+1. Triggers based on the calling workflow's configuration (typically on push/PR)
+2. Checks out the repository's code
+3. Sets up `uv` package manager with Python 3.12
+4. Runs `make devenv` to setup development environment
+5. Runs `make lint` to execute linting
+
+### Benefits
+
+- **Zero Configuration**: No inputs or secrets required
+- **Consistent Environment**: All projects use Python 3.12 with uv
+- **Standardized Linting**: Ensures all projects follow the same linting process
+- **Easy Updates**: Update linting logic in one place
 
 ---
 
